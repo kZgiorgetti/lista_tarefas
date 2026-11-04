@@ -1,8 +1,6 @@
 # Minhas Tarefas — Lista de tarefas com Flutter e Firebase
 
-Projeto acadêmico simples, feito em **Dart e Flutter**, para cadastrar, visualizar, concluir e excluir tarefas pessoais. Os dados ficam salvos no **Firebase Cloud Firestore**.
-
-> **Aviso:** este código foi escrito e revisado, mas **não foi executado** em um dispositivo ou no FlutLab durante a criação. Pode ser necessário ajustar pequenos detalhes (como a versão das dependências) conforme o ambiente.
+Projeto acadêmico, feito em **Dart e Flutter**, para cadastrar, visualizar, concluir e excluir tarefas pessoais. Os dados ficam salvos no **Firebase Cloud Firestore**.
 
 ## 1. Funcionalidades
 
@@ -16,31 +14,13 @@ Projeto acadêmico simples, feito em **Dart e Flutter**, para cadastrar, visuali
 - Firebase Core (`firebase_core`)
 - Cloud Firestore (`cloud_firestore`)
 
-## 3. Estrutura de pastas
-
-```text
-lib/
-├── main.dart
-├── models/
-│   └── tarefa.dart
-├── services/
-│   └── banco_dados.dart
-└── screens/
-    ├── inicio_screen.dart
-    ├── lista_tarefas_screen.dart
-    └── adicionar_tarefa_screen.dart 
-
-pubspec.yaml
-README.md
-```
-
-## 4. Pré-requisitos
+## 3. Pré-requisitos
 
 - Conta gratuita no [FlutLab.io](https://flutlab.io)
 - Conta Google (para usar o [Firebase Console](https://console.firebase.google.com))
 - Conexão com a internet
 
-## 5. Como abrir o projeto no FlutLab.io
+## 4. Como abrir o projeto no FlutLab.io
 
 1. Entre no FlutLab.io e crie um novo projeto Flutter (ou abra um projeto existente).
 2. Substitua o conteúdo do `pubspec.yaml` pelo deste projeto.
@@ -50,7 +30,7 @@ README.md
 
 Os nomes exatos de menus do FlutLab podem mudar com o tempo. Se algo estiver diferente, procure a opção equivalente no editor.
 
-## 6. Como configurar um projeto Firebase
+## 5. Como configurar um projeto Firebase
 
 1. Acesse o [Firebase Console](https://console.firebase.google.com) e clique em **Criar um projeto** (ou **Adicionar projeto**).
 2. Dê um nome (por exemplo, `lista-tarefas`) e conclua a criação. Pode desativar o Google Analytics, pois não é necessário.
@@ -60,7 +40,7 @@ Os nomes exatos de menus do FlutLab podem mudar com o tempo. Se algo estiver dif
 4. Registre o app com um apelido. Para Android, será pedido o **nome do pacote**: ele está no arquivo `android/app/build.gradle` (campo `applicationId`) ou no `AndroidManifest.xml` do seu projeto no FlutLab. Use exatamente esse nome.
 5. Depois de registrar, o Firebase mostra os valores de configuração (`apiKey`, `appId`, `messagingSenderId`, `projectId`). Você também encontra esses valores em **Configurações do projeto** (engrenagem) → **Geral** → **Seus apps**.
 
-## 7. Como habilitar o Cloud Firestore
+## 6. Como habilitar o Cloud Firestore
 
 1. No menu lateral do Firebase Console, abra **Criação** → **Firestore Database**.
 2. Clique em **Criar banco de dados**.
@@ -70,7 +50,7 @@ Os nomes exatos de menus do FlutLab podem mudar com o tempo. Se algo estiver dif
 
 Se aparecer erro de permissão depois, abra a aba **Regras** do Firestore e confira se o modo de teste ainda está válido.
 
-## 8. Como configurar as dependências e a conexão com o banco de dados
+## 7. Como configurar as dependências e a conexão com o banco de dados
 
 **Dependências:** já estão no `pubspec.yaml`:
 
@@ -101,13 +81,13 @@ Substitua cada texto entre aspas pelos valores do passo 5 da seção 6. Use os v
 
 **Arquivos de configuração:** com este método, o `google-services.json` não é obrigatório. Ele só seria necessário se você preferisse o método padrão do Android (colocar o arquivo em `android/app/` e configurar o plugin do Google Services no Gradle). Se escolher esse caminho, siga a documentação oficial do Firebase e verifique se o plano/ambiente do FlutLab permite editar os arquivos da pasta `android`. Se não permitir, use o método deste README ou execute o projeto no seu computador com o Flutter instalado.
 
-## 9. Como executar o aplicativo
+## 8. Como executar o aplicativo
 
 1. Confira se todos os arquivos estão no lugar e se os dados do Firebase foram preenchidos no `main.dart`.
 2. Clique em **Run** (ou equivalente) no FlutLab e escolha a plataforma (Web ou Android) compatível com o app registrado no Firebase.
 3. Aguarde a compilação. A tela de início deve aparecer.
 
-## 10. Como testar
+## 9. Como testar
 
 1. **Cadastro:** na tela de início, clique em **Ver lista de tarefas**, depois em **Adicionar tarefa**, digite um título e clique em **Salvar tarefa**. Você volta para a lista e a tarefa aparece.
 2. **Título vazio:** tente salvar sem digitar nada. Deve aparecer a mensagem "Digite o título da tarefa."
@@ -117,7 +97,7 @@ Substitua cada texto entre aspas pelos valores do passo 5 da seção 6. Use os v
 6. **Contagem:** volte para o início e veja se a quantidade de tarefas foi atualizada.
 7. **Lista vazia:** exclua todas as tarefas e confira a mensagem "Nenhuma tarefa cadastrada."
 
-## 11. Como funcionam `async` e `await`
+## 10. Como funcionam `async` e `await`
 
 Acessar o banco de dados leva um tempo, pois os dados vêm da internet. Se o app ficasse esperando parado, a tela travaria.
 
@@ -138,7 +118,7 @@ Future<void> _carregarTarefas() async {
 
 O app pede as tarefas ao banco, **espera** a resposta e só então chama `setState` para atualizar a tela. O bloco `try/catch` captura erros (por exemplo, falta de internet) e mostra uma mensagem amigável.
 
-## 12. Problemas comuns e possíveis soluções
+## 11. Problemas comuns e possíveis soluções
 
 | Problema                                     | Possível solução                                                                                                         |
 | -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
