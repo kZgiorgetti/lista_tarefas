@@ -1,0 +1,7 @@
+{
+  "editor.fontFamily": "'JetBrains Mono', Consolas, monospace",
+  "editor.fontLigatures": true,
+  "[markdown]": {
+    "editor.wordWrap": "on"
+  }
+}
