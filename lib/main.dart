@@ -1,23 +1,16 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'screens/inicio_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  if (kIsWeb) {
-    await Firebase.initializeApp(
-      options: const FirebaseOptions(
-      apiKey: "AIzaSyC-A6-OJlaWljoBDGFyiX4B_JLm-mhyKXE",
-      appId: "1:951048712364:web:f0ca5500b29a4acc0f2f09",
-      messagingSenderId: "951048712364",
-      projectId: "lista-tarefas-a90e6",
-      ),
-    );
-  } else {
-    await Firebase.initializeApp();
+  if (!kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.windows ||
+          defaultTargetPlatform == TargetPlatform.linux ||
+          defaultTargetPlatform == TargetPlatform.macOS)) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
   }
 
   runApp(const MeuApp());

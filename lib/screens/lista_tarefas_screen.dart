@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 import '../models/tarefa.dart';
 import '../services/banco_dados.dart';
@@ -17,35 +16,11 @@ class _ListaTarefasScreenState extends State<ListaTarefasScreen> {
   List<Tarefa> _tarefas = [];
   bool _carregando = true;
   String? _erroCarregamento;
-  StreamSubscription<List<Tarefa>>? _assinaturaTarefas;
 
   @override
   void initState() {
     super.initState();
-    _assinaturaTarefas = _banco.observarTarefas().listen(
-      (lista) {
-        if (!mounted) return;
-        setState(() {
-          _tarefas = lista;
-          _carregando = false;
-          _erroCarregamento = null;
-        });
-      },
-      onError: (Object erro) {
-        if (!mounted) return;
-        setState(() {
-          _carregando = false;
-          _erroCarregamento =
-              'Erro ao carregar as tarefas. Verifique a conexão e as permissões do Firebase.';
-        });
-      },
-    );
-  }
-
-  @override
-  void dispose() {
-    _assinaturaTarefas?.cancel();
-    super.dispose();
+    _carregarTarefas();
   }
 
   void _mostrarMensagem(String texto) {

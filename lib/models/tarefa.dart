@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class Tarefa {
-  final String id;
+  final int id;
   final String titulo;
   final bool concluida;
 
@@ -11,12 +9,11 @@ class Tarefa {
     required this.concluida,
   });
 
-  factory Tarefa.fromDocument(DocumentSnapshot<Map<String, dynamic>> doc) {
-    final dados = doc.data() ?? {};
+  factory Tarefa.fromMap(Map<String, dynamic> dados) {
     return Tarefa(
-      id: doc.id,
-      titulo: dados['titulo'] ?? '',
-      concluida: dados['concluida'] ?? false,
+      id: dados['id'] as int,
+      titulo: dados['titulo'] as String? ?? '',
+      concluida: (dados['concluida'] as num?)?.toInt() == 1,
     );
   }
 }

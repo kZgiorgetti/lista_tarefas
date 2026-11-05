@@ -46,3 +46,9 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
+
+# Banco SQLite local de desenvolvimento
+tarefas.db
+tarefas.db-journal
+tarefas.db-wal
+tarefas.db-shm

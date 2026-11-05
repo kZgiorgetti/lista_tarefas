@@ -34,7 +34,7 @@ class _InicioScreenState extends State<InicioScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _erro = 'Não foi possível carregar as tarefas. Verifique a configuração do Firebase.';
+        _erro = 'Não foi possível carregar as tarefas. Tente novamente.';
         _carregando = false;
       });
     }

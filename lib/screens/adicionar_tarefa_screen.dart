@@ -45,7 +45,7 @@ class _AdicionarTarefaScreenState extends State<AdicionarTarefaScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _erro = 'Não foi possível salvar a tarefa. Verifique a conexão e as permissões do Firebase.';
+        _erro = 'Não foi possível salvar a tarefa. Tente novamente.';
         _salvando = false;
       });
     }
