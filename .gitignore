@@ -46,6 +46,3 @@ app.*.map.json
 
 # Widget Preview related
 .widget_preview/
-
-# Configuração local com a URL e a chave publicável do Supabase
-.env

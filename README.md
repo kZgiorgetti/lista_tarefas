@@ -1,11 +1,23 @@
-# Minhas Tarefas — Flutter e Supabase
+# Minhas Tarefas
 
-Aplicativo Flutter para cadastrar, listar, concluir e excluir tarefas. Os dados ficam no Supabase e podem ser acessados em mais de um dispositivo.
+## Ideia do projeto
 
-## Configurar o Supabase
+Este é um aplicativo simples de lista de tarefas feito para praticar Flutter e integração com um banco de dados na nuvem. É possível cadastrar tarefas, visualizar a lista, marcar tarefas como concluídas e excluí-las. A tela inicial também mostra a quantidade de tarefas.
+
+Como os dados ficam no Supabase, eles não ficam limitados ao arquivo local de um único aparelho.
+
+## O que o projeto usa
+
+- **Flutter e Dart** para as telas e a lógica do aplicativo.
+- **Supabase** como banco de dados PostgreSQL e API para consultar e alterar tarefas.
+- **`supabase_flutter`** para conectar o app ao Supabase.
+- **`flutter_dotenv`** para carregar a URL e a chave publicável de `.env`.
+- **RLS** (Row Level Security) para controlar quais operações o banco permite.
+
+## Passo 1: preparar o Supabase
 
 1. Crie um projeto no [painel do Supabase](https://supabase.com/dashboard).
-2. Abra o **SQL Editor** e crie a tabela:
+2. No projeto, abra **SQL Editor** e execute:
 
 ```sql
 create table public.tarefas (
@@ -17,26 +29,11 @@ create table public.tarefas (
 alter table public.tarefas enable row level security;
 ```
 
-3. Confira a **Project URL** e a chave **Publishable** em **Project Settings → API Keys** ou no painel **Connect**.
+3. No painel, abra **Project Settings → API Keys** ou **Connect** e copie a **Project URL** e a chave **Publishable**.
 
-## Configurar o app
+### Permissões para testar sem login
 
-Os valores usados pelo app ficam no arquivo `.env.example`, na raiz do projeto. Esse arquivo é versionado e incluído no bundle para funcionar no FlutLab:
-
-```env
-SUPABASE_URL=https://seu-projeto.supabase.co
-SUPABASE_PUBLISHABLE_KEY=sua-chave-publicavel
-```
-
-O app carrega `.env.example` diretamente. Não precisa criar um `.env` separado nem configurar `--dart-define`. Se trocar de projeto Supabase, atualize os dois valores em `.env.example` e sincronize o arquivo com o FlutLab.
-
-O `.env.example` é empacotado como asset do app; portanto, os valores podem ser extraídos do aplicativo compilado. Isso é esperado para a chave publicável, que é própria para clientes. Nunca use `service_role` ou uma chave `sb_secret_` no app. A segurança dos dados deve vir das políticas RLS.
-
-## Permissões e RLS
-
-A tabela foi criada com RLS habilitada. Sem políticas, o Supabase nega as operações do app. O app não tem autenticação.
-
-Para testar em um projeto descartável, crie uma política temporária para `anon`:
+O app não tem autenticação. Com RLS habilitada e sem políticas, as operações serão bloqueadas. Para testar em um projeto descartável, você pode permitir temporariamente acesso ao papel `anon`:
 
 ```sql
 grant select, insert, update, delete on public.tarefas to anon;
@@ -49,28 +46,51 @@ using (true)
 with check (true);
 ```
 
-Essa política deixa qualquer pessoa com acesso ao app ver, criar, alterar e excluir tarefas. Use somente em um projeto de teste sem dados pessoais. Remova-a antes de publicar:
+Essa política permite que qualquer pessoa com a URL e a chave publicável do app leia, crie, altere e exclua as tarefas. Use somente para testes sem dados pessoais e remova a política antes de publicar:
 
 ```sql
 drop policy "Acesso temporário para teste" on public.tarefas;
 ```
 
-Sem autenticação, não há como distinguir com segurança quem é dono de cada tarefa. Não publique com acesso irrestrito nem desative RLS.
+Sem autenticação, o banco não consegue identificar um dono para cada tarefa. Não use uma política aberta em produção nem desative RLS.
 
-## Executar
+## Passo 2: conferir as configurações do app
 
-Na raiz do projeto, rode:
+Na raiz do projeto há um arquivo `.env` com estas duas variáveis:
+
+```env
+SUPABASE_URL=https://seu-projeto.supabase.co
+SUPABASE_PUBLISHABLE_KEY=sua-chave-publicavel
+```
+
+Confira se os valores correspondem ao mesmo projeto Supabase. O arquivo está declarado como asset no `pubspec.yaml` e é carregado pelo `main.dart`; por isso, ele precisa estar presente quando o FlutLab importar ou compilar o projeto.
+
+A chave Publishable é feita para aplicativos cliente e pode ser extraída do app compilado. Nunca coloque uma chave `service_role` ou `sb_secret_` no projeto. A proteção dos dados depende das políticas RLS.
+
+## Passo 3: executar localmente
+
+Instale o Flutter SDK, conecte um dispositivo ou inicie um emulador e, no terminal aberto na pasta do projeto, rode:
 
 ```sh
 flutter pub get
+flutter devices
 flutter run
 ```
 
-No FlutLab, sincronize os arquivos e as dependências e gere o build.
+Se houver mais de um dispositivo, selecione um pelo identificador:
 
-## Funcionalidades
+```sh
+flutter run -d ID_DO_DISPOSITIVO
+```
 
-- A tela inicial mostra a quantidade de tarefas e abre a lista.
-- A lista recarrega após adicionar, concluir ou excluir uma tarefa.
-- O cadastro espera a confirmação do Supabase antes de voltar à lista. Em caso de erro, o formulário permanece aberto.
-- A tabela usa `id` como chave primária, `titulo` obrigatório e `concluida` com padrão `false`.
+## Executar no FlutLab
+
+1. Sincronize ou importe todos os arquivos do projeto, incluindo `.env`.
+2. Aguarde a resolução das dependências (**Pub get**).
+3. Escolha o destino Android ou `web-emulator` e gere/execute o build.
+
+Se aparecer erro de asset não encontrado para `.env`, confirme que o arquivo foi enviado para a raiz do projeto no FlutLab. Se aparecer erro de permissão, confira a tabela e as políticas RLS no Supabase.
+
+## Como os dados são organizados
+
+A tabela `public.tarefas` contém `id` (chave primária), `titulo` (texto obrigatório) e `concluida` (booleano que começa como `false`). O cadastro aguarda o Supabase confirmar a gravação antes de voltar à lista. A lista é recarregada após adicionar, concluir ou excluir uma tarefa.

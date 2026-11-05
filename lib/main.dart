@@ -6,7 +6,7 @@ import 'screens/inicio_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env.example');
+  await dotenv.load(fileName: '.env');
   final supabaseUrl = dotenv.env['SUPABASE_URL'] ?? '';
   final supabasePublishableKey =
       dotenv.env['SUPABASE_PUBLISHABLE_KEY'] ?? '';
