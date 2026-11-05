@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 import '../models/tarefa.dart';
 import '../services/banco_dados.dart';
@@ -15,11 +16,36 @@ class _ListaTarefasScreenState extends State<ListaTarefasScreen> {
   final BancoDados _banco = BancoDados();
   List<Tarefa> _tarefas = [];
   bool _carregando = true;
+  String? _erroCarregamento;
+  StreamSubscription<List<Tarefa>>? _assinaturaTarefas;
 
   @override
   void initState() {
     super.initState();
-    _carregarTarefas();
+    _assinaturaTarefas = _banco.observarTarefas().listen(
+      (lista) {
+        if (!mounted) return;
+        setState(() {
+          _tarefas = lista;
+          _carregando = false;
+          _erroCarregamento = null;
+        });
+      },
+      onError: (Object erro) {
+        if (!mounted) return;
+        setState(() {
+          _carregando = false;
+          _erroCarregamento =
+              'Erro ao carregar as tarefas. Verifique a conexão e as permissões do Firebase.';
+        });
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _assinaturaTarefas?.cancel();
+    super.dispose();
   }
 
   void _mostrarMensagem(String texto) {
@@ -27,17 +53,24 @@ class _ListaTarefasScreenState extends State<ListaTarefasScreen> {
   }
 
   Future<void> _carregarTarefas() async {
+    if (mounted) {
+      setState(() {
+        _carregando = true;
+      });
+    }
     try {
       final lista = await _banco.consultarTarefas();
       if (!mounted) return;
       setState(() {
         _tarefas = lista;
         _carregando = false;
+        _erroCarregamento = null;
       });
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _carregando = false;
+        _erroCarregamento = 'Erro ao carregar as tarefas. Tente novamente.';
       });
       _mostrarMensagem('Erro ao carregar as tarefas. Tente novamente.');
     }
@@ -74,6 +107,25 @@ class _ListaTarefasScreenState extends State<ListaTarefasScreen> {
   Widget _construirLista() {
     if (_carregando) {
       return const Center(child: CircularProgressIndicator());
+    }
+
+    if (_erroCarregamento != null && _tarefas.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(_erroCarregamento!, textAlign: TextAlign.center),
+              const SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: _carregarTarefas,
+                child: const Text('Tentar novamente'),
+              ),
+            ],
+          ),
+        ),
+      );
     }
 
     if (_tarefas.isEmpty) {

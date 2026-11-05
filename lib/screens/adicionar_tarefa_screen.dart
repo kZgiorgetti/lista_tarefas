@@ -38,16 +38,15 @@ class _AdicionarTarefaScreenState extends State<AdicionarTarefaScreen> {
       _salvando = true;
     });
 
-    final gravacao = _banco.cadastrarTarefa(titulo);
-    if (!mounted) return;
-    Navigator.pop(context, true);
-
     try {
-      await gravacao;
+      await _banco.cadastrarTarefa(titulo);
+      if (!mounted) return;
+      Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
       setState(() {
         _erro = 'Não foi possível salvar a tarefa. Verifique a conexão e as permissões do Firebase.';
+        _salvando = false;
       });
     }
   }

@@ -14,16 +14,18 @@ class BancoDados {
   }
 
   Future<List<Tarefa>> consultarTarefas() async {
-    final resultado = await _tarefas.get(
-      const GetOptions(source: Source.serverAndCache),
-    );
+    final resultado = await _tarefas.get();
     return resultado.docs.map((doc) => Tarefa.fromDocument(doc)).toList();
   }
 
+  Stream<List<Tarefa>> observarTarefas() => _tarefas.snapshots().map(
+        (resultado) => resultado.docs
+            .map((doc) => Tarefa.fromDocument(doc))
+            .toList(),
+      );
+
   Future<int> contarTarefas() async {
-    final resultado = await _tarefas.get(
-      const GetOptions(source: Source.serverAndCache),
-    );
+    final resultado = await _tarefas.get();
     return resultado.docs.length;
   }
 
