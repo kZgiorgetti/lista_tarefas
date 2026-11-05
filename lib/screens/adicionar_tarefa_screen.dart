@@ -45,7 +45,7 @@ class _AdicionarTarefaScreenState extends State<AdicionarTarefaScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _erro = 'Não foi possível salvar a tarefa. Tente novamente.';
+        _erro = 'Não foi possível salvar. Confira sua conexão e as permissões do Supabase.';
         _salvando = false;
       });
     }

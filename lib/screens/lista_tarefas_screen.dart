@@ -45,7 +45,8 @@ class _ListaTarefasScreenState extends State<ListaTarefasScreen> {
       if (!mounted) return;
       setState(() {
         _carregando = false;
-        _erroCarregamento = 'Erro ao carregar as tarefas. Tente novamente.';
+        _erroCarregamento =
+            'Não foi possível carregar as tarefas. Confira a conexão e as permissões do Supabase.';
       });
       _mostrarMensagem('Erro ao carregar as tarefas. Tente novamente.');
     }

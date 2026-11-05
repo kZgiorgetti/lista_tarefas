@@ -34,7 +34,8 @@ class _InicioScreenState extends State<InicioScreen> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _erro = 'Não foi possível carregar as tarefas. Tente novamente.';
+        _erro =
+            'Não foi possível carregar as tarefas. Confira a conexão e as permissões do Supabase.';
         _carregando = false;
       });
     }

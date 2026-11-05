@@ -11,9 +11,9 @@ class Tarefa {
 
   factory Tarefa.fromMap(Map<String, dynamic> dados) {
     return Tarefa(
-      id: dados['id'] as int,
+      id: (dados['id'] as num).toInt(),
       titulo: dados['titulo'] as String? ?? '',
-      concluida: (dados['concluida'] as num?)?.toInt() == 1,
+      concluida: dados['concluida'] as bool? ?? false,
     );
   }
 }

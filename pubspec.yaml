@@ -1,18 +1,15 @@
 name: lista_tarefas
-description: Aplicativo simples de lista de tarefas com Flutter e SQLite.
+description: Aplicativo simples de lista de tarefas com Flutter e Supabase.
 publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=2.19.0 <4.0.0'
+  sdk: '>=3.9.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  sqflite: ^2.4.2
-  sqflite_common_ffi: ^2.3.4
-  sqflite_common_ffi_web: 1.1.1
-  path: ^1.9.1
+  supabase_flutter: ^2.18.3
 
 flutter:
   uses-material-design: true

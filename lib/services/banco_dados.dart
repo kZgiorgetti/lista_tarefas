@@ -1,66 +1,35 @@
-import 'package:sqflite/sqflite.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import 'configurar_banco.dart' as banco;
 import '../models/tarefa.dart';
 
 class BancoDados {
-  static const String _nomeBanco = 'tarefas.db';
-  static const String _nomeTabela = 'tarefas';
-  static Database? _banco;
-
-  Future<Database> get _database async {
-    if (_banco != null) return _banco!;
-
-    final caminho = await banco.caminho(_nomeBanco);
-    _banco = await openDatabase(
-      caminho,
-      version: 1,
-      onCreate: (db, versao) async {
-        await db.execute('''
-          CREATE TABLE $_nomeTabela (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            titulo TEXT NOT NULL,
-            concluida INTEGER NOT NULL DEFAULT 0
-          )
-        ''');
-      },
-    );
-    return _banco!;
-  }
+  final SupabaseClient _supabase = Supabase.instance.client;
 
   Future<void> cadastrarTarefa(String titulo) async {
-    await (await _database).insert(_nomeTabela, {'titulo': titulo});
+    await _supabase.from('tarefas').insert({'titulo': titulo});
   }
 
   Future<List<Tarefa>> consultarTarefas() async {
-    final resultado = await (await _database).query(
-      _nomeTabela,
-      orderBy: 'id ASC',
-    );
-    return resultado.map(Tarefa.fromMap).toList();
+    final resultado = await _supabase
+        .from('tarefas')
+        .select('id, titulo, concluida')
+        .order('id');
+    return resultado.map((dados) => Tarefa.fromMap(dados)).toList();
   }
 
   Future<int> contarTarefas() async {
-    final resultado = await (await _database).rawQuery(
-      'SELECT COUNT(*) AS total FROM $_nomeTabela',
-    );
-    return Sqflite.firstIntValue(resultado) ?? 0;
+    final resultado = await _supabase.from('tarefas').select('id');
+    return resultado.length;
   }
 
   Future<void> atualizarConclusao(int id, bool concluida) async {
-    await (await _database).update(
-      _nomeTabela,
-      {'concluida': concluida ? 1 : 0},
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    await _supabase
+        .from('tarefas')
+        .update({'concluida': concluida})
+        .eq('id', id);
   }
 
   Future<void> excluirTarefa(int id) async {
-    await (await _database).delete(
-      _nomeTabela,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    await _supabase.from('tarefas').delete().eq('id', id);
   }
 }
