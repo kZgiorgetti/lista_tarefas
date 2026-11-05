@@ -17,7 +17,7 @@ No Android e iOS, o arquivo do banco fica no armazenamento privado do aplicativo
 
 ## Testar no Web Emulator do FlutLab
 
-O projeto usa `sqflite_common_ffi_web` para executar SQLite no navegador. O suporte Web desse pacote é experimental; no navegador, os dados ficam no IndexedDB associados à origem/porta, não como `tarefas.db` no repositório.
+O projeto usa `sqflite_common_ffi_web` versão `1.1.1` para executar SQLite no navegador. Essa versão é compatível com o Dart 3.11.5 do FlutLab. O suporte Web do pacote é experimental; no navegador, os dados ficam no IndexedDB associados à origem/porta, não como `tarefas.db` no repositório.
 
 Os arquivos `web/sqlite3.wasm` e `web/sqflite_sw.js` já estão incluídos. Se atualizar o pacote ou precisar gerá-los novamente, execute na raiz do projeto:
 
