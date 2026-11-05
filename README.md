@@ -1,37 +1,38 @@
 # Minhas Tarefas
 
-Aplicativo feito com Flutter para cadastrar, listar, concluir e excluir tarefas. Os dados são guardados localmente usando SQLite.
+Aplicativo Flutter para cadastrar, listar, concluir e excluir tarefas. Os dados ficam em um banco SQLite local.
 
-## Requisitos
+## Executar no Android/iOS
 
-- Flutter SDK instalado.
-- Um emulador Android/iOS iniciado ou um dispositivo conectado.
-
-## Executar o aplicativo
-
-No terminal, abra a pasta do projeto e rode:
+1. Instale o Flutter SDK.
+2. Conecte um dispositivo ou inicie um emulador.
+3. Na raiz do projeto, execute:
 
 ```sh
 flutter pub get
 flutter run
 ```
 
-Se houver mais de um dispositivo, veja os disponíveis com `flutter devices` e escolha um usando `flutter run -d ID_DO_DISPOSITIVO`.
+No Android e iOS, o arquivo do banco fica no armazenamento privado do aplicativo. Não é necessário criar o arquivo manualmente nem configurar servidor ou credenciais.
 
-Este projeto tem configuração para Android e iOS. Embora também exista uma pasta `web`, o SQLite usado pelo app não funciona no navegador. O projeto ainda não tem a plataforma Windows configurada.
+## Testar no Web Emulator do FlutLab
 
-## Banco de dados
+O projeto usa `sqflite_common_ffi_web` para executar SQLite no navegador. O suporte Web desse pacote é experimental; no navegador, os dados ficam no IndexedDB associados à origem/porta, não como `tarefas.db` no repositório.
 
-Na primeira execução, o app cria automaticamente o banco `tarefas.db` e a tabela `tarefas`.
+Os arquivos `web/sqlite3.wasm` e `web/sqflite_sw.js` já estão incluídos. Se atualizar o pacote ou precisar gerá-los novamente, execute na raiz do projeto:
 
-A tabela contém:
+```sh
+dart run sqflite_common_ffi_web:setup
+```
 
-- `id`: número inteiro, chave primária e gerado automaticamente;
+Depois, mantenha os dois arquivos na pasta `web/` ao importar ou atualizar o projeto no FlutLab e escolha **web-emulator** para compilar/abrir a versão Web. Use sempre a mesma origem e porta para manter o armazenamento local do navegador.
+
+## Banco de dados e funcionalidades
+
+Na primeira execução, o app cria a tabela `tarefas` com:
+
+- `id`: inteiro, chave primária e autoincremental;
 - `titulo`: texto obrigatório;
-- `concluida`: número (`0` para não concluída e `1` para concluída), padrão `0`.
+- `concluida`: inteiro (`0` ou `1`), padrão `0`.
 
-No Android e iOS, o arquivo do banco fica no armazenamento privado do aplicativo, não na pasta do repositório. Não é necessário criar o arquivo manualmente nem configurar servidor, conta ou credenciais. Os dados ficam no dispositivo e não são sincronizados com outros aparelhos.
-
-## Uso
-
-Na tela inicial, abra a lista para visualizar as tarefas. Use **Adicionar tarefa** para cadastrar uma tarefa; o título não pode ficar vazio. O app espera a gravação no banco antes de voltar à lista. Na lista, marque a caixa para concluir ou use o ícone de lixeira para excluir. A lista é atualizada depois de cada operação.
+O app recarrega a lista após adicionar, concluir ou excluir. O formulário espera a gravação antes de voltar à lista e permanece aberto se ocorrer erro. Os dados são locais e não sincronizam entre navegador, emulador e dispositivo.
