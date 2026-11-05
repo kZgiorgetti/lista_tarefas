@@ -21,16 +21,16 @@ alter table public.tarefas enable row level security;
 
 ## Configurar o app
 
-Os valores ficam no arquivo `.env`, na raiz do projeto:
+Os valores usados pelo app ficam no arquivo `.env.example`, na raiz do projeto. Esse arquivo é versionado e incluído no bundle para funcionar no FlutLab:
 
 ```env
 SUPABASE_URL=https://seu-projeto.supabase.co
 SUPABASE_PUBLISHABLE_KEY=sua-chave-publicavel
 ```
 
-O `.env` está ignorado pelo Git. Ele precisa existir antes de executar ou compilar o app. No FlutLab, crie também esse arquivo na raiz do projeto importado e inclua nele os valores do seu projeto. Não é necessário configurar `--dart-define`.
+O app carrega `.env.example` diretamente. Não precisa criar um `.env` separado nem configurar `--dart-define`. Se trocar de projeto Supabase, atualize os dois valores em `.env.example` e sincronize o arquivo com o FlutLab.
 
-O `.env` é empacotado como asset do app; portanto, os valores podem ser extraídos do aplicativo compilado. Isso é esperado para a chave publicável, que é própria para clientes. Nunca use `service_role` ou uma chave `sb_secret_` no app. A segurança dos dados deve vir das políticas RLS.
+O `.env.example` é empacotado como asset do app; portanto, os valores podem ser extraídos do aplicativo compilado. Isso é esperado para a chave publicável, que é própria para clientes. Nunca use `service_role` ou uma chave `sb_secret_` no app. A segurança dos dados deve vir das políticas RLS.
 
 ## Permissões e RLS
 
@@ -66,7 +66,7 @@ flutter pub get
 flutter run
 ```
 
-No FlutLab, sincronize as dependências e gere o build com o `.env` presente no projeto.
+No FlutLab, sincronize os arquivos e as dependências e gere o build.
 
 ## Funcionalidades
 
