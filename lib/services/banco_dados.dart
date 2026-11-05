@@ -1,10 +1,6 @@
-import 'dart:io';
-
-import 'package:flutter/foundation.dart';
-import 'package:path/path.dart' as path;
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'configurar_banco.dart' as banco;
 import '../models/tarefa.dart';
 
 class BancoDados {
@@ -15,13 +11,7 @@ class BancoDados {
   Future<Database> get _database async {
     if (_banco != null) return _banco!;
 
-    final usarArquivoNoRepositorio = !kIsWeb &&
-        (defaultTargetPlatform == TargetPlatform.windows ||
-            defaultTargetPlatform == TargetPlatform.linux ||
-            defaultTargetPlatform == TargetPlatform.macOS);
-    final caminho = usarArquivoNoRepositorio
-        ? path.join(Directory.current.path, _nomeBanco)
-        : path.join(await getDatabasesPath(), _nomeBanco);
+    final caminho = await banco.caminho(_nomeBanco);
     _banco = await openDatabase(
       caminho,
       version: 1,
