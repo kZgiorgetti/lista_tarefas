@@ -1,6 +1,6 @@
 # Minhas Tarefas — Flutter e Supabase
 
-Aplicativo Flutter para cadastrar, listar, concluir e excluir tarefas. Os dados ficam no Supabase, então podem ser acessados em mais de um dispositivo usando o mesmo projeto.
+Aplicativo Flutter para cadastrar, listar, concluir e excluir tarefas. Os dados ficam no Supabase e podem ser acessados em mais de um dispositivo.
 
 ## Configurar o Supabase
 
@@ -17,18 +17,31 @@ create table public.tarefas (
 alter table public.tarefas enable row level security;
 ```
 
-3. Copie a **Project URL** e a chave **Publishable** em **Project Settings → API Keys** (ou no botão **Connect**). Projetos antigos podem mostrar a chave pública `anon`. Nunca use `service_role` ou uma secret key no app.
+3. Confira a **Project URL** e a chave **Publishable** em **Project Settings → API Keys** ou no painel **Connect**.
+
+## Configurar o app
+
+Os valores ficam no arquivo `.env`, na raiz do projeto:
+
+```env
+SUPABASE_URL=https://seu-projeto.supabase.co
+SUPABASE_PUBLISHABLE_KEY=sua-chave-publicavel
+```
+
+O `.env` está ignorado pelo Git. Ele precisa existir antes de executar ou compilar o app. No FlutLab, crie também esse arquivo na raiz do projeto importado e inclua nele os valores do seu projeto. Não é necessário configurar `--dart-define`.
+
+O `.env` é empacotado como asset do app; portanto, os valores podem ser extraídos do aplicativo compilado. Isso é esperado para a chave publicável, que é própria para clientes. Nunca use `service_role` ou uma chave `sb_secret_` no app. A segurança dos dados deve vir das políticas RLS.
 
 ## Permissões e RLS
 
-A tabela é criada com RLS habilitada. Sem políticas, o Supabase nega as operações do app. O app ainda não tem login, então não existe uma forma segura de identificar a quem pertence cada tarefa.
+A tabela foi criada com RLS habilitada. Sem políticas, o Supabase nega as operações do app. O app não tem autenticação.
 
-Para um teste em um projeto descartável, você pode criar políticas temporárias para o papel `anon`:
+Para testar em um projeto descartável, crie uma política temporária para `anon`:
 
 ```sql
 grant select, insert, update, delete on public.tarefas to anon;
 
-create policy "Acesso temporário para teste local"
+create policy "Acesso temporário para teste"
 on public.tarefas
 for all
 to anon
@@ -36,30 +49,28 @@ using (true)
 with check (true);
 ```
 
-Essa política permite que qualquer pessoa com acesso ao app veja, crie, altere e exclua tarefas do projeto. Use somente em um projeto de teste sem dados pessoais e remova a política antes de publicar:
+Essa política deixa qualquer pessoa com acesso ao app ver, criar, alterar e excluir tarefas. Use somente em um projeto de teste sem dados pessoais. Remova-a antes de publicar:
 
 ```sql
-drop policy "Acesso temporário para teste local" on public.tarefas;
+drop policy "Acesso temporário para teste" on public.tarefas;
 ```
 
-Para produção, implemente autenticação e associe cada tarefa ao usuário, por exemplo com `usuario_id uuid not null references auth.users(id)`. O app deve enviar o ID do usuário ao cadastrar e as políticas devem conferir `auth.uid() = usuario_id` em leitura, inserção, atualização e exclusão. Não publique com a política temporária acima nem desative RLS.
+Sem autenticação, não há como distinguir com segurança quem é dono de cada tarefa. Não publique com acesso irrestrito nem desative RLS.
 
-## Configurar as credenciais
+## Executar
 
-As credenciais são lidas de defines de compilação e não ficam escritas no código-fonte. Execute localmente substituindo os exemplos pelos valores do seu projeto:
+Na raiz do projeto, rode:
 
 ```sh
 flutter pub get
-flutter run --dart-define=SUPABASE_URL=https://SEU-PROJETO.supabase.co --dart-define=SUPABASE_PUBLISHABLE_KEY=sb_publishable_SUA_CHAVE
+flutter run
 ```
 
-Passe os mesmos `--dart-define` ao comando `flutter build` ou configure-os nos argumentos de build do FlutLab. Não compartilhe os valores em código público, capturas de tela ou logs. A chave publicável foi feita para uso no cliente e não é um segredo; a proteção dos dados depende das políticas RLS.
+No FlutLab, sincronize as dependências e gere o build com o `.env` presente no projeto.
 
-## Usar o aplicativo
+## Funcionalidades
 
 - A tela inicial mostra a quantidade de tarefas e abre a lista.
-- A lista consulta a tabela e recarrega depois de adicionar, concluir ou excluir.
-- O cadastro aguarda a confirmação do Supabase antes de voltar à lista. Se a gravação falhar, o formulário permanece aberto e mostra uma mensagem.
-- A tabela usa `id` como chave primária e `concluida` com padrão `false`.
-
-Se o app mostrar erro de permissão, confira se a tabela existe, se RLS está habilitada e se as políticas correspondem à configuração de autenticação usada.
+- A lista recarrega após adicionar, concluir ou excluir uma tarefa.
+- O cadastro espera a confirmação do Supabase antes de voltar à lista. Em caso de erro, o formulário permanece aberto.
+- A tabela usa `id` como chave primária, `titulo` obrigatório e `concluida` com padrão `false`.
